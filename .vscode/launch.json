@@ -13,12 +13,14 @@
         },
         {
             "type": "ruby_lsp",
-            "name": "Debug Sinatra",
+            "name": "Debug Web Application",
             "request": "launch",
-            "program": "ruby ${file} -s puma"
-            
-        },
-        
+            "program": "puma -C ${workspaceFolder}/config/puma.rb ${workspaceFolder}/config.ru",
+            "env": {
+                "WEB_CONCURRENCY": "1",
+                "MAX_THREADS": "1"
+            }
+        }      
    
     ]
 }
