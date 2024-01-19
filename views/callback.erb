@@ -1,6 +1,17 @@
+<script>
+   // Copy using navicator.clipboard.writeText
+    function copyToClipboard(text) {
+         navigator.clipboard.writeText(text).then(function() {
+              alert("Copied!");
+         }, function() {
+              alert("Failed to copy to clipboard!");
+         });
+    }
+</script>
+
 <section class="py-6">
     <div class="bg-white p-6 rounded shadow text-center">
         <h2 class="text-2xl font-bold mb-2">User ID</h2>
-        <p class="text-gray-600">Please use the following user ID with NoteLinkGPT: <%= user_id %></p>
+        <p class="text-gray-600">Please use the following user ID with NoteLinkGPT: <b><%= user_id %><b></p>
+        <a href="#" class="text-blue-500 underline" onclick="copyToClipboard('<%= user_id %>')">Copy</a>
     </div>
-</section>
