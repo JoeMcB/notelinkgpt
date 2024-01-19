@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/namespace'
+require 'redis'
 require 'dotenv'
 
 env = ENV['RACK_ENV'] || 'development'
@@ -13,13 +14,13 @@ require 'evernote_oauth'
 
 require_relative './lib/fixnum_fix'
 
-class Everlink < Sinatra::Base
+class NoteLinkGPT < Sinatra::Base
   CLIENT_KEY = ENV['CLIENT_KEY']
   CLIENT_SECRET = ENV['CLIENT_SECRET']
   SANDBOX = ENV['SANDBOX'] == 'true'
+  REDIS_URL = ENV['REDIS_URL']
 
-  # Override Fixnum to Integer cause Everote client is ancient.
-
+  $redis = Redis.new(url: REDIS_URL)
 
   enable :sessions, :logging
   set :environment, ENV['RACK_ENV']
@@ -49,11 +50,11 @@ class Everlink < Sinatra::Base
       request_token = session[:request_token]
       access_token = request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
 
-      session[:access_token] = access_token.token
-      session[:access_token_secret] = access_token.secret
+      # Store edam_userId in session
+      session[:edam_userId] = access_token.params[:edam_userId]
 
-      puts "Access token: #{session[:access_token]}"
-      puts "Access token secret: #{session[:access_token_secret]}"
+      # Store the token in Redis
+      $redis.set("user:#{session[:edam_userId]}:access_token", access_token.token)
 
       # Redirect to the notes listing page
       redirect to('/api/notes')
@@ -61,13 +62,17 @@ class Everlink < Sinatra::Base
   end
 
   namespace '/api' do
+    before do
+      halt 401, { error: 'User not logged in' }.to_json unless session[:edam_userId]
+      @oauth_token = $redis.get("user:#{session[:edam_userId]}:access_token")
+    end
+
     get '/notes' do
       page_size = params[:page_size]&.to_i || 10
       page_number = params[:page_number]&.to_i || 1
       offset = (page_number - 1) * page_size
 
-      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
-      client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
 
@@ -80,15 +85,13 @@ class Everlink < Sinatra::Base
         { title: note.title, guid: note.guid }
       end
 
-      # content_type :json
       response.to_json
     end
 
     get '/notes/search' do
       query = params[:q]
 
-      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
-      client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
 
@@ -105,10 +108,8 @@ class Everlink < Sinatra::Base
       end.to_json
     end
 
-
     get '/notes/:guid' do
-      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
-      client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
 
@@ -118,7 +119,6 @@ class Everlink < Sinatra::Base
       # Render note metadata and content to JSON
       response = { title: note.title, guid: note.guid, content: note.content }
 
-      # content_type :json
       response.to_json
     end
   end

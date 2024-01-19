@@ -20,7 +20,6 @@
                 "WEB_CONCURRENCY": "1",
                 "MAX_THREADS": "1"
             }
-        }      
-   
+        }   
     ]
 }

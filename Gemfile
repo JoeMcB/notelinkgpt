@@ -5,6 +5,7 @@ gem 'evernote_oauth'
 gem 'puma'
 gem 'dotenv'
 gem 'sinatra-contrib'
+gem 'redis'
 
 # Development Block
 group :development do

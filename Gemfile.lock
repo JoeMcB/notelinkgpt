@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
+    connection_pool (2.4.1)
     dotenv (2.8.1)
     evernote-thrift (1.25.2)
     evernote_oauth (0.2.3)
@@ -25,6 +26,10 @@ GEM
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-unreloader (2.1.0)
+    redis (5.0.8)
+      redis-client (>= 0.17.0)
+    redis-client (0.19.1)
+      connection_pool
     ruby2_keywords (0.0.5)
     sinatra (3.2.0)
       mustermann (~> 3.0)
@@ -51,6 +56,7 @@ DEPENDENCIES
   evernote_oauth
   puma
   rack-unreloader
+  redis
   sinatra
   sinatra-contrib
 
