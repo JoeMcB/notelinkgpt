@@ -14,6 +14,9 @@ require 'evernote_oauth'
 
 require_relative './lib/fixnum_fix'
 
+# Helpers
+require_relative './lib/encryption_helper'
+
 class NoteLinkGPT < Sinatra::Base
   CLIENT_KEY = ENV['CLIENT_KEY']
   CLIENT_SECRET = ENV['CLIENT_SECRET']
@@ -27,6 +30,8 @@ class NoteLinkGPT < Sinatra::Base
   set :session_secret, ENV['SESSION_SECRET']
 
   register Sinatra::Namespace
+
+  helpers EncryptionHelper
 
   get '/' do
     erb :index
@@ -56,15 +61,26 @@ class NoteLinkGPT < Sinatra::Base
       # Store the token in Redis
       $redis.set("user:#{session[:edam_userId]}:access_token", access_token.token)
 
-      # Redirect to the notes listing page
-      redirect to('/api/notes')
+      # Encrypt userId
+      encrypted_user_id = encrypt(session[:edam_userId], ENV['ENCRYPTION_KEY'])
+
+      erb :callback, locals: { user_id: encrypted_user_id }
     end
   end
 
   namespace '/api' do
     before do
-      halt 401, { error: 'User not logged in' }.to_json unless session[:edam_userId]
-      @oauth_token = $redis.get("user:#{session[:edam_userId]}:access_token")
+      halt 401, { error: 'Access Denied' }.to_json unless params[:user_id]
+
+      begin
+        encrypted_user_id = params[:user_id]
+        user_id = decrypt(encrypted_user_id, ENV['ENCRYPTION_KEY'])
+        @oauth_token = $redis.get("user:#{user_id}:access_token")
+
+        halt 401, { error: 'User not logged in' }.to_json unless @oauth_token
+      rescue OpenSSL::Cipher::CipherError
+        halt 401, { error: 'Bad Hash' }.to_json unless @oauth_token
+      end
     end
 
     get '/notes' do
