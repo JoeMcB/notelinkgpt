@@ -52,6 +52,9 @@ class Everlink < Sinatra::Base
       session[:access_token] = access_token.token
       session[:access_token_secret] = access_token.secret
 
+      puts "Access token: #{session[:access_token]}"
+      puts "Access token secret: #{session[:access_token_secret]}"
+
       # Redirect to the notes listing page
       redirect to('/api/notes')
     end
