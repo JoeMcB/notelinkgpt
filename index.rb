@@ -63,7 +63,7 @@ class Everlink < Sinatra::Base
       page_number = params[:page_number]&.to_i || 1
       offset = (page_number - 1) * page_size
 
-      oauth_token = session[:access_token]
+      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
       client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
@@ -84,7 +84,7 @@ class Everlink < Sinatra::Base
     get '/notes/search' do
       query = params[:q]
 
-      oauth_token = session[:access_token]
+      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
       client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
@@ -104,7 +104,7 @@ class Everlink < Sinatra::Base
 
 
     get '/notes/:guid' do
-      oauth_token = session[:access_token]
+      oauth_token = ENV['EVERNOTE_ACCESS_TOKEN'] || session[:access_token]
       client = EvernoteOAuth::Client.new(token: oauth_token, sandbox: SANDBOX)
 
       note_store = client.note_store
