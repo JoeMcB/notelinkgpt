@@ -52,22 +52,8 @@ class Api < Sinatra::Base
 
     get '/notes/search' do
       query = params[:q]
-
-      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
-
-      note_store = client.note_store
-
-      # Create a NoteFilter with the search query
-      filter = Evernote::EDAM::NoteStore::NoteFilter.new
-      filter.words = query
-
-      # Fetch notes
-      notes = note_store.findNotes(filter, 0, 100).notes
-
-      # Render notes title and guid to JSON
-      notes.map do |note|
-        { title: note.title, guid: note.guid }
-      end.to_json
+      results = SearchHelper.search_notes(@oauth_token, sandbox?, query)
+      results.to_json
     end
 
     get '/notes/:guid' do
@@ -82,6 +68,69 @@ class Api < Sinatra::Base
       response = { title: note.title, guid: note.guid, content: note.content }
 
       response.to_json
+    end
+
+    get '/notebooks' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      notebooks = note_store.listNotebooks
+      notebooks.map { |notebook| { name: notebook.name, guid: notebook.guid } }.to_json
+    end
+
+    get '/notebooks/:notebook_guid' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      notebook = note_store.getNotebook(params[:notebook_guid])
+      { name: notebook.name, guid: notebook.guid }.to_json
+    end
+
+    get '/tags' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      tags = note_store.listTags
+      tags.map { |tag| { name: tag.name, guid: tag.guid } }.to_json
+    end
+
+    get '/tags/:tag_guid' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      tag = note_store.getTag(params[:tag_guid])
+      { name: tag.name, guid: tag.guid }.to_json
+    end
+
+    get '/notebooks/:notebook_guid/notes/search' do
+      query = params[:q]
+      results = SearchHelper.search_notes(@oauth_token, sandbox?, query, params[:notebook_guid])
+      results.to_json
+    end
+
+    get '/tags/:tag_guid/notes' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      filter = Evernote::EDAM::NoteStore::NoteFilter.new
+      filter.tagGuids = [params[:tag_guid]]
+      notes = note_store.findNotes(filter, 0, 100).notes
+      notes.map { |note| { title: note.title, guid: note.guid } }.to_json
+    end
+
+    get '/notes/:guid/versions' do
+      client = EvernoteOAuth::Client.new(token: @oauth_token, sandbox: sandbox?)
+      note_store = client.note_store
+      versions = note_store.listNoteVersions(params[:guid])
+      versions.map { |version| { title: version.title, updateSequenceNum: version.updateSequenceNum } }.to_json
+    end
+
+    get '/search' do
+      query = params[:q]
+      notebook_guid = params[:notebook_guid]
+      tag_guids = params[:tag_guids]
+      page = params[:page].to_i || 1
+      page_size = params[:page_size].to_i || 100
+      created_after = params[:created_after]
+      created_before = params[:created_before]
+
+      results = SearchHelper.search_notes(@oauth_token, sandbox?, query, notebook_guid, tag_guids, page, page_size, created_after, created_before)
+      results.to_json
     end
   end
 end

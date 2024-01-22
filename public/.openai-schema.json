@@ -1,0 +1,343 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NoteLinkGPT API",
+    "description": "API for interacting with Evernote",
+    "version": "v1.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://www.notelinkgpt.com/"
+    }
+  ],
+  "paths": {
+    "/api/notes": {
+      "get": {
+        "description": "Retrieve a list of notes",
+        "operationId": "GetNotes",
+        "parameters": [
+        {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of notes to retrieve per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "Page number to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/api/notes/search": {
+      "get": {
+        "description": "Search for notes",
+        "operationId": "SearchNotes",
+        "parameters": [
+        {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/api/notes/{guid}": {
+      "get": {
+        "description": "Retrieve a specific note by GUID",
+        "operationId": "GetNote",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "GUID of the note to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+
+    "/api/notebooks": {
+      "get": {
+        "description": "List all notebooks",
+        "operationId": "GetNotebooks",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+
+    "/api/notebooks/{notebook_guid}": {
+      "get": {
+        "description": "Retrieve a specific notebook by GUID",
+        "operationId": "GetNotebook",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "notebook_guid",
+            "in": "path",
+            "description": "GUID of the notebook to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+
+    "/api/tags": {
+      "get": {
+        "description": "List all tags",
+        "operationId": "GetTags",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+
+    "/api/tags/{tag_guid}": {
+      "get": {
+        "description": "Retrieve a specific tag by GUID",
+        "operationId": "GetTag",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag_guid",
+            "in": "path",
+            "description": "GUID of the tag to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/api/notes/{guid}/versions": {
+      "get": {
+        "description": "Retrieve the versions of a specific note",
+        "operationId": "GetNoteVersions",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "GUID of the note to retrieve versions for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/api/search": {
+      "get": {
+        "description": "Search notes with various filters",
+        "operationId": "SearchNotesWithFilters",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID for the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "notebook_guid",
+            "in": "query",
+            "description": "GUID of the notebook to narrow down the search",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag_guids",
+            "in": "query",
+            "description": "GUIDs of tags to include in the search",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of the search results to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of search results to retrieve per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "created_after",
+            "in": "query",
+            "description": "Filter notes created after this timestamp",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "created_before",
+            "in": "query",
+            "description": "Filter notes created before this timestamp",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "guid": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+    
+  },
+  "components": {
+    "schemas": {}
+  }
+}
