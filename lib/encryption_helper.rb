@@ -1,4 +1,3 @@
-
 module EncryptionHelper
     def encrypt(text, key)
       puts "encrypting #{text} with key #{key}"
