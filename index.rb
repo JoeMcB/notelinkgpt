@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/namespace'
 require 'redis'
 require 'dotenv'
+require 'rack/ssl-enforcer'
 
 env = ENV['RACK_ENV'] || 'development'
 env_files = [
@@ -18,14 +19,20 @@ require_relative './lib/fixnum_fix'
 require_relative './lib/encryption_helper'
 
 class NoteLinkGPT < Sinatra::Base
+  # Environment variables
   CLIENT_KEY = ENV['CLIENT_KEY']
   CLIENT_SECRET = ENV['CLIENT_SECRET']
   SANDBOX = ENV['SANDBOX'] == 'true'
   REDIS_URL = ENV['REDIS_URL']
 
+  # Globals
   $redis = Redis.new(url: REDIS_URL)
 
+  # Sinatra Configuration
+  use Rack::SslEnforcer if production?
+
   enable :sessions, :logging
+
   set :environment, ENV['RACK_ENV']
   set :session_secret, ENV['SESSION_SECRET']
 
@@ -33,6 +40,7 @@ class NoteLinkGPT < Sinatra::Base
 
   helpers EncryptionHelper
 
+  # Routes
   get '/' do
     erb :index
   end

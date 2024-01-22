@@ -25,6 +25,7 @@ GEM
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
+    rack-ssl-enforcer (0.2.9)
     rack-unreloader (2.1.0)
     redis (5.0.8)
       redis-client (>= 0.17.0)
@@ -55,6 +56,7 @@ DEPENDENCIES
   dotenv
   evernote_oauth
   puma
+  rack-ssl-enforcer
   rack-unreloader
   redis
   sinatra
