@@ -23,4 +23,23 @@ module SearchHelper
       { title: note.title, guid: note.guid }
     end
   end
+
+  def self.relative_date_range(period, count = 1)
+    # Fixed values from openai-schema params
+    if period == 'day'
+      created_after = Date.today - count
+      created_before = Date.today + 1
+    elsif period == 'week'
+      created_after = Date.today - (count * 7)
+      created_before = Date.today + 1
+    elsif period == 'month'
+      created_after = Date.today - (count * 30)
+      created_before = Date.today + 1
+    elsif period == 'year'
+      created_after = Date.today - (count * 365)
+      created_before = Date.today + 1
+    end
+
+    [created_after, created_before]
+  end
 end

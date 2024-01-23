@@ -307,6 +307,30 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "name": "relative_time_unit",
+            "in": "query",
+            "description": "Unit of relative time",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year"
+              ]
+            }
+          },
+          {
+            "name": "relative_time_count",
+            "in": "query",
+            "description": "Count of relative time",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "responses": {

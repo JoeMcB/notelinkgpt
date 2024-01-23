@@ -126,8 +126,13 @@ class Api < Sinatra::Base
       tag_guids = params[:tag_guids]
       page = params[:page].to_i || 1
       page_size = params[:page_size].to_i || 100
-      created_after = params[:created_after]
-      created_before = params[:created_before]
+
+      if(params[:relative_time_unit] && params[:relative_time_count])
+        created_after, created_before = SearchHelper.relative_date_range(params[:relative_time_unit], params[:relative_time_count].to_i)
+      else
+        created_after = params[:created_after]
+        created_before = params[:created_before]
+      end
 
       results = SearchHelper.search_notes(@oauth_token, sandbox?, query, notebook_guid, tag_guids, page, page_size, created_after, created_before)
       results.to_json
