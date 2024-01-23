@@ -17,6 +17,7 @@ require 'evernote_oauth'
 
 require 'lib/fixnum_fix'
 require 'lib/encryption_helper'
+require 'lib/search_helper'
 
 # Application
 require 'app/auth'

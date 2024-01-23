@@ -287,50 +287,6 @@
               "type": "integer",
               "default": 100
             }
-          },
-          {
-            "name": "created_after",
-            "in": "query",
-            "description": "Filter notes created after this timestamp",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "created_before",
-            "in": "query",
-            "description": "Filter notes created before this timestamp",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "relative_time_unit",
-            "in": "query",
-            "description": "Unit of relative time",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "day",
-                "week",
-                "month",
-                "year"
-              ]
-            }
-          },
-          {
-            "name": "relative_time_count",
-            "in": "query",
-            "description": "Count of relative time",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
