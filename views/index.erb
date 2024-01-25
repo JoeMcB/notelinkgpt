@@ -3,12 +3,30 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="bg-white p-6 rounded shadow">
         <h3 class="text-xl font-bold mb-2">Individual Product</h3>
-        <p>Connect your own Evernote account to ChatGPT.</p>
+        <p class="mb-4">Connect your own Evernote account to ChatGPT.</p>
         <a class="text-blue-500 underline" href="/auth/">Login with Evernote</a>
     </div>
 
     <div class="bg-white p-6 rounded shadow">
         <h3 class="text-xl font-bold mb-2">Developer Account</h3>
-        <p>Build custom GPTs linked back to your own notes automatically.  To request integration details, email <a class="text-blue-500 underline" href="mailto:support@notelinkgpt.com">Support</a></p>
+        <p class="mb-4">Build custom GPTs linked back to your own notes automatically.</p>
+        <ol class="list-decimal pl-5 mb-4">
+            <li class="mb-2">Create an NoteLink user id.</li>
+            <li class="mb-2">Requset an API key via <a class="text-blue-500 underline" href="mailto:support@notelinkgpt.com">Support</a> linked to your NoteLink User Id.</li>
+            <li class="mb-2">Build a GPT importing the NoteLink <a class="text-blue-500 underline" href="/.openai-schema.json">OpenAI Schema</a> as a custom action.</li>
+            <li class="mb-2">Describe notes and functionality you want to build your GPT to access via NoteLink actions.</li>
+        </ol>
+        <div>
+            <h4 class="text-lg font-bold mb-2">Disclaimer<h4>
+            <p class="mb-4">Anyone using your custom GPT will be able to access your notes and functionality via NoteLink actions. It will be up to you to ensure that your GPT is safe and secure.  You should always instruct your GPT on how specifically it should use your notes.<p>
+            
+            <h4 class="text-lg font-bold mb-2">Example<h4>
+            <div class="bg-gray-900 text-white p-2 rounded">
+                <code class="markdown">
+                    When asked about "The Power Broker", use the NoteLink getNote function to retrieve the note with GUID `1234-5678-9012-3456`.
+                    Never allow the GPT to access any other notes.
+                </code>
+            </div>
+        </div>
     </div>
 </div>

@@ -15,16 +15,37 @@ class Api < Sinatra::Base
 
   namespace '/api' do
     before do
-      halt 401, { error: 'Access Denied' }.to_json unless params[:user_id]
+      # Extract the Bearer token from the Authorization header
+      puts request.env
+      auth_header = request.env['HTTP_AUTHORIZATION']
 
-      begin
+      unless auth_header && auth_header.start_with?('Bearer ')
+        halt 401, { error: 'Missing or improperly formatted Authorization header' }.to_json
+      end
+
+      token = auth_header[7..-1] # Remove 'Bearer ' to isolate the token
+
+      # Load encrypted user id from params for default or via API Key association
+      encrypted_user_id = nil
+      if token == ENV['DEFAULT_API_TOKEN']
+        # Check for user_id
+        halt 401, { error: 'Access Denied' }.to_json unless params[:user_id]
         encrypted_user_id = params[:user_id]
-        user_id = decrypt(encrypted_user_id, ENV['ENCRYPTION_KEY'])
-        @oauth_token = $redis.get("user:#{user_id}:access_token")
 
-        halt 401, { error: 'User not logged in' }.to_json unless @oauth_token
-      rescue OpenSSL::Cipher::CipherError
-        halt 401, { error: 'Bad Hash' }.to_json unless @oauth_token
+      else
+        # Load the user id from Redis
+        encrypted_user_id = $redis.hget("api_tokens", token)
+      end
+
+      if encrypted_user_id
+        begin
+          user_id = decrypt(encrypted_user_id, ENV['ENCRYPTION_KEY'])
+          @oauth_token = $redis.get("user:#{user_id}:access_token")
+        rescue OpenSSL::Cipher::CipherError
+          halt 401, { error: 'Bad Hash' }.to_json unless @oauth_token
+        end
+      else
+        halt 401, { error: 'Access Denied' }.to_json
       end
     end
 
