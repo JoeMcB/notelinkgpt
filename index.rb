@@ -3,6 +3,8 @@ require 'sinatra/namespace'
 require 'redis'
 require 'dotenv'
 require 'rack/ssl-enforcer'
+require 'newrelic_rpm'
+
 
 env = ENV['RACK_ENV'] || 'development'
 env_files = [
