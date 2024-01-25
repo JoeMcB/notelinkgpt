@@ -16,7 +16,6 @@ class Api < Sinatra::Base
   namespace '/api' do
     before do
       # Extract the Bearer token from the Authorization header
-      puts request.env
       auth_header = request.env['HTTP_AUTHORIZATION']
 
       unless auth_header && auth_header.start_with?('Bearer ')

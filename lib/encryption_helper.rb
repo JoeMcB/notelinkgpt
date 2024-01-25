@@ -1,6 +1,6 @@
 module EncryptionHelper
     def encrypt(text, key)
-      puts "encrypting #{text} with key #{key}"
+      # puts "encrypting #{text} with key #{key}"
       cipher = OpenSSL::Cipher::AES.new(256, :CBC)
       cipher.encrypt
       cipher.key = [key].pack('H*')
@@ -9,7 +9,7 @@ module EncryptionHelper
     end
 
     def decrypt(text, key)
-      puts "decrypting #{text} with key #{key}"
+      # puts "decrypting #{text} with key #{key}"
       decipher = OpenSSL::Cipher::AES.new(256, :CBC)
       decipher.decrypt
       decipher.key = [key].pack('H*')
